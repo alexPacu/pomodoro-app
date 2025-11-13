@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pomodoro.TasksPage"
+             BackgroundColor="{StaticResource PageBackground}"
+             Title="Feladatok">
+
+    <Grid RowDefinitions="Auto,*" Padding="20">
+        <Grid ColumnDefinitions="*,Auto" Grid.Row="0" Margin="0,0,0,10">
+            <Entry Placeholder="Új feladat..." Text="{Binding NewTaskTitle}"
+                   PlaceholderColor="Gray" TextColor="{StaticResource TextColor}" />
+            <Button Text="Hozzáad" Command="{Binding AddTaskCommand}"
+                    Grid.Column="1" BackgroundColor="{StaticResource Primary}" TextColor="White" />
+        </Grid>
+
+        <CollectionView ItemsSource="{Binding Tasks}" Grid.Row="1">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="5">
+                        <ImageButton Source="{Binding IsCompleted, Converter={StaticResource BoolToImage}}"
+                                     Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleCompleteCommand}"
+                                     CommandParameter="{Binding}"
+                                     WidthRequest="30" HeightRequest="30" />
+
+                        <Label Text="{Binding Title}"
+                               Grid.Column="1"
+                               VerticalOptions="Center"
+                               TextColor="{StaticResource TextColor}"
+                               TextDecorations="{Binding IsCompleted, Converter={StaticResource BoolToStrike}}" />
+
+                        <Button Text="Töröl"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"
+                                CommandParameter="{Binding}"
+                                Grid.Column="2"
+                                BackgroundColor="Red" TextColor="White" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

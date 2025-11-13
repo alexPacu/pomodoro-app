@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Pomodoro.ViewModels"
+             x:Class="Pomodoro.MainPage"
+             Title="{Binding Title}"
+             >
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Padding="20" RowSpacing="20">
+        <Label Text="{Binding DisplayTime}"
+               FontSize="72"
+               HorizontalOptions="Center"
+               TextColor="{DynamicResource PrimaryText}" />
+
+        <ProgressBar Progress="{Binding Progress}"
+                     Grid.Row="1"
+                     HeightRequest="20"
+                     ProgressColor="{DynamicResource Accent}" />
+
+        <Label Text="{Binding SessionType}"
+               Grid.Row="2"
+               FontSize="24"
+               HorizontalOptions="Center"
+               TextColor="{DynamicResource SecondaryText}" />
+
+        <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="Center" Spacing="15">
+            <Button Text="Start" Command="{Binding StartCommand}"
+                    BackgroundColor="{DynamicResource Success}" TextColor="White" />
+            <Button Text="Pause" Command="{Binding PauseCommand}"
+                    BackgroundColor="{DynamicResource Warning}" TextColor="White" />
+            <Button Text="Reset" Command="{Binding ResetCommand}"
+                    BackgroundColor="{DynamicResource Danger}" TextColor="White" />
+        </StackLayout>
+
+        <Button Text="Feladatok" Grid.Row="3" HorizontalOptions="End"
+                Command="{Binding Source={x:Static Application.Current}, Path=OpenTasksPageCommand}" />
+    </Grid>
+</ContentPage>
