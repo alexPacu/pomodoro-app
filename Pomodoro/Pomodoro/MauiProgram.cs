@@ -1,7 +1,7 @@
-﻿using Pomodoro.ViewModels;
-using CommunityToolkit.Maui;
+﻿using CommunityToolkit.Maui;
 using Pomodoro.Services;
-using Pomodoro.Repositories;
+using Pomodoro.ViewModels;
+using Pomodoro.Views;
 
 namespace Pomodoro;
 
@@ -16,9 +16,9 @@ public static class MauiProgram
             .ConfigureFonts(f => f.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"));
 
         builder.Services.AddSingleton<DatabaseService>();
-        builder.Services.AddSingleton<TaskRepository>();
         builder.Services.AddTransient<MainViewModel>();
-        builder.Services.AddTransient<TasksViewModel>();
+        builder.Services.AddTransient<MainPage>(sp =>
+            new MainPage(sp.GetRequiredService<MainViewModel>()));
 
         return builder.Build();
     }

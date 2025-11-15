@@ -1,38 +1,126 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:Pomodoro.ViewModels"
-             x:Class="Pomodoro.MainPage"
-             Title="{Binding Title}"
-             >
+             x:Class="Pomodoro.Views.MainPage"
+             BackgroundColor="#F5F7FA"
+             Padding="30">
 
-    <Grid RowDefinitions="Auto,*,Auto,Auto" Padding="20" RowSpacing="20">
-        <Label Text="{Binding DisplayTime}"
-               FontSize="72"
-               HorizontalOptions="Center"
-               TextColor="{DynamicResource PrimaryText}" />
+    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="30">
 
-        <ProgressBar Progress="{Binding Progress}"
-                     Grid.Row="1"
-                     HeightRequest="20"
-                     ProgressColor="{DynamicResource Accent}" />
+        <VerticalStackLayout Grid.Column="0" Spacing="30" HorizontalOptions="Center" VerticalOptions="Center">
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="40">
+                <Label Text="Pomodoro" TextColor="{Binding PomodoroColor}" FontSize="22" FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SelectPomodoroCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label Text="Rest" TextColor="{Binding RestColor}" FontSize="22" FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SelectRestCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label Text="Long Rest" TextColor="{Binding LongRestColor}" FontSize="22" FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SelectLongRestCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
 
-        <Label Text="{Binding SessionType}"
-               Grid.Row="2"
-               FontSize="24"
-               HorizontalOptions="Center"
-               TextColor="{DynamicResource SecondaryText}" />
+            <Label Text="{Binding DisplayTime}"
+                   FontSize="100"
+                   FontAttributes="Bold"
+                   TextColor="{Binding ModeColor}"
+                   HorizontalOptions="Center" />
 
-        <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="Center" Spacing="15">
-            <Button Text="Start" Command="{Binding StartCommand}"
-                    BackgroundColor="{DynamicResource Success}" TextColor="White" />
-            <Button Text="Pause" Command="{Binding PauseCommand}"
-                    BackgroundColor="{DynamicResource Warning}" TextColor="White" />
-            <Button Text="Reset" Command="{Binding ResetCommand}"
-                    BackgroundColor="{DynamicResource Danger}" TextColor="White" />
-        </StackLayout>
+            <Button Text="{Binding StartButtonText}"
+                    Command="{Binding StartPauseCommand}"
+                    BackgroundColor="{Binding ModeColor}"
+                    TextColor="White"
+                    HeightRequest="75"
+                    WidthRequest="320"
+                    FontSize="26"
+                    FontAttributes="Bold"
+                    CornerRadius="38"
+                    HorizontalOptions="Center" />
+        </VerticalStackLayout>
 
-        <Button Text="Feladatok" Grid.Row="3" HorizontalOptions="End"
-                Command="{Binding Source={x:Static Application.Current}, Path=OpenTasksPageCommand}" />
+        <Frame Grid.Column="1"
+               BackgroundColor="White"
+               CornerRadius="20"
+               Padding="25"
+               HasShadow="True"
+               VerticalOptions="FillAndExpand"
+               MinimumWidthRequest="420"
+               BorderColor="#E0E0E0">
+
+            <Grid RowDefinitions="Auto,Auto,*" RowSpacing="15">
+
+                <Label Text="Tasks" FontSize="24" FontAttributes="Bold" Grid.Row="0" />
+
+                <VerticalStackLayout Grid.Row="1" Spacing="10">
+                    <Frame BackgroundColor="White" 
+                           BorderColor="#007BFF" 
+                           CornerRadius="12" 
+                           Padding="12" 
+                           HasShadow="False">
+                        <Entry Placeholder="Add new task..." 
+                               Text="{Binding NewTaskTitle}" 
+                               FontSize="16" 
+                               TextColor="#333"
+                               BackgroundColor="Transparent" />
+                    </Frame>
+
+                    <Button Text="Add" 
+                            Command="{Binding AddTaskCommand}" 
+                            BackgroundColor="#007BFF" 
+                            TextColor="White"
+                            CornerRadius="12"
+                            HeightRequest="50"
+                            FontSize="18"
+                            FontAttributes="Bold" />
+                </VerticalStackLayout>
+
+                <CollectionView ItemsUpdatingScrollMode="KeepScrollOffset" Grid.Row="2"
+                                ItemsSource="{Binding Tasks}"
+                                VerticalOptions="FillAndExpand"
+                                Margin="0,10,0,0"
+                                SelectionMode="None">
+
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="0" Margin="0"
+                                   BackgroundColor="#F8F9FA"
+                                   CornerRadius="10"
+                                   HasShadow="False">
+
+                                <Grid ColumnDefinitions="*,Auto" Padding="10,8">
+
+                                    <Label Text="{Binding Title}" 
+                                           FontSize="16" 
+                                           VerticalOptions="Center"
+                                           TextColor="#333" />
+
+                                    <Button Text="X"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTaskCommand}"
+                                            CommandParameter="{Binding}"
+                                            BackgroundColor="#DC3545"
+                                            TextColor="White"
+                                            CornerRadius="20"
+                                            WidthRequest="36"
+                                            HeightRequest="36"
+                                            FontSize="16"
+                                            FontAttributes="Bold"
+                                            Grid.Column="1" />
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </Frame>
     </Grid>
 </ContentPage>

@@ -1,20 +1,31 @@
 ﻿using SQLite;
-using System.IO;
 using Pomodoro.Models;
 
 namespace Pomodoro.Services;
 
 public class DatabaseService
 {
-    private SQLiteAsyncConnection _database;
+    private readonly SQLiteAsyncConnection _db;
 
     public DatabaseService()
     {
-        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "idokocka.db3");
-        _database = new SQLiteAsyncConnection(dbPath);
-        _database.CreateTableAsync<TaskItem>().Wait();
-        _database.CreateTableAsync<PomodoroSession>().Wait();
+        var path = Path.Combine(FileSystem.AppDataDirectory, "pomodoro.db3");
+        _db = new SQLiteAsyncConnection(path);
+
+        _db.CreateTableAsync<TaskItem>().Wait();
     }
 
-    public SQLiteAsyncConnection GetConnection() => _database;
+    public Task<List<TaskItem>> GetTasksAsync()
+        => _db.Table<TaskItem>().ToListAsync();
+
+    public Task<int> SaveTaskAsync(TaskItem task)
+    {
+        if (task.Id != 0)
+            return _db.UpdateAsync(task);
+
+        return _db.InsertAsync(task);
+    }
+
+    public Task<int> DeleteTaskAsync(TaskItem task)
+        => _db.DeleteAsync(task);
 }
