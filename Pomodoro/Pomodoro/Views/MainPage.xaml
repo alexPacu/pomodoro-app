@@ -26,10 +26,13 @@
                 </Label>
             </HorizontalStackLayout>
 
-            <Label Text="{Binding DisplayTime}"
+            <Entry Text="{Binding DisplayTime, Mode=TwoWay, UpdateSourceEventName=TextChanged}"
                    FontSize="100"
                    FontAttributes="Bold"
                    TextColor="{Binding ModeColor}"
+                   HorizontalTextAlignment="Center"
+                   BackgroundColor="Transparent"
+                   Keyboard="Numeric"
                    HorizontalOptions="Center" />
 
             <Button Text="{Binding StartButtonText}"

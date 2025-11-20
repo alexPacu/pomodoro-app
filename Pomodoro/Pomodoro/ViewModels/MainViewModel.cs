@@ -11,13 +11,15 @@ public partial class MainViewModel : ObservableObject
     private readonly DatabaseService _db;
     private readonly System.Timers.Timer _timer;
 
-    private const int PomodoroDuration = 25 * 60;
-    private const int RestDuration = 5 * 60;
-    private const int LongRestDuration = 15 * 60;
+    private const int PomodoroDuration = 8;//25 * 60;
+    private const int RestDuration = 8;//5 * 60;
+    private const int LongRestDuration = 8;//15 * 60;
 
     private int _seconds;
     private int _mode;
     private bool _isRunning;
+
+    private bool _suppressDisplayTimeUpdate;
 
     public MainViewModel(DatabaseService db)
     {
@@ -39,6 +41,49 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private string startButtonText = "START";
     [ObservableProperty] private ObservableCollection<TaskItem> tasks = new();
     [ObservableProperty] private string newTaskTitle = "";
+
+    partial void OnDisplayTimeChanged(string value)
+    {
+        if (_suppressDisplayTimeUpdate)
+            return;
+
+        if (TryParseTime(value, out var seconds))
+        {
+            _seconds = seconds;
+            UpdateDisplay();
+        }
+    }
+
+    private bool TryParseTime(string? input, out int seconds)
+    {
+        seconds = 0;
+        if (string.IsNullOrWhiteSpace(input))
+            return false;
+
+        input = input.Trim();
+
+        if (input.Contains(':'))
+        {
+            var parts = input.Split(':');
+            if (parts.Length != 2)
+                return false;
+
+            if (!int.TryParse(parts[0], out var m)) return false;
+            if (!int.TryParse(parts[1], out var s)) return false;
+            if (m < 0 || s < 0 || s >= 60) return false;
+
+            seconds = m * 60 + s;
+            return true;
+        }
+
+        if (int.TryParse(input, out var minutes) && minutes >= 0)
+        {
+            seconds = minutes * 60;
+            return true;
+        }
+
+        return false;
+    }
 
 
     private void Reset()
@@ -134,7 +179,9 @@ public partial class MainViewModel : ObservableObject
     {
         var m = _seconds / 60;
         var s = _seconds % 60;
+        _suppressDisplayTimeUpdate = true;
         DisplayTime = $"{m:D2}:{s:D2}";
+        _suppressDisplayTimeUpdate = false;
     }
 
     private void UpdateColors()
